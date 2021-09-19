@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_home"
+            android:title="@string/menu_home" />
+        <item
+            android:id="@+id/nav_prayers"
+            android:icon="@drawable/ic_prayers"
+            android:title="@string/menu_prayers" />
+        <item
+            android:id="@+id/nav_daily"
+            android:icon="@drawable/ic_daily"
+            android:title="@string/menu_daily" />
+
+        <item
+            android:id="@+id/nav_todo"
+            android:icon="@drawable/ic_todo"
+            android:title="@string/menu_todo" />
+        <item
+            android:id="@+id/nav_profile"
+            android:icon="@drawable/ic_profile"
+            android:title="@string/menu_profile" />
+
+        <!--
+        <item
+            android:id="@+id/nav_"
+            android:icon="@drawable/ic_"
+            android:title="@string/menu_" />
+        -->
+
+    </group>
+</menu>

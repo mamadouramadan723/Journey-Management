@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        app:showAsAction="never|collapseActionView"/>
+    <item
+        android:id="@+id/action_signout"
+        android:title="@string/action_signout"
+        app:showAsAction="never|collapseActionView"/>
+    <item
+        android:id="@+id/action_search"
+        android:title="@string/rechercher"
+        android:icon="@drawable/ic_search"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/action_addpost"
+        android:title="@string/add_post"
+        android:icon="@drawable/ic_add"
+        app:showAsAction="always"/>
+</menu>
