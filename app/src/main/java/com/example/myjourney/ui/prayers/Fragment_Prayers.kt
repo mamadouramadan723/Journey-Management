@@ -39,6 +39,7 @@ class Fragment_Prayers : Fragment() {
             /*evaluateJavascript("getToastMessage();") { returnValue ->
                 Toast.makeText(requireContext(), returnValue, Toast.LENGTH_SHORT).show()
             }*/
+            fghjklmù* dfghjklm
 
         }
     }
