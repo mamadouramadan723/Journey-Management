@@ -7,7 +7,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.myjourney.R
 import com.example.myjourney.models.User
 import com.firebase.ui.auth.AuthUI
+import com.firebase.ui.auth.AuthUI.IdpConfig
+import com.firebase.ui.auth.AuthUI.IdpConfig.EmailBuilder
 import com.firebase.ui.auth.IdpResponse
+import com.google.firebase.auth.ActionCodeSettings
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
@@ -15,12 +18,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.util.*
+
 
 class Activity_Login_or_Register : AppCompatActivity() {
 
-    private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var firebaseAuth : FirebaseAuth
     private lateinit var listener : FirebaseAuth.AuthStateListener
-    private lateinit var providers: List<AuthUI.IdpConfig>
+    private lateinit var providers: List<IdpConfig>
 
     private val AUTH_REQUEST_CODE = 1234
     private val profileref = FirebaseFirestore.getInstance().collection("profile")
@@ -56,10 +61,22 @@ class Activity_Login_or_Register : AppCompatActivity() {
     }
 
     private fun loginRegister() {
+        val actionCodeSettings = ActionCodeSettings.newBuilder()
+            .setAndroidPackageName(
+                packageName,
+                true,  /* install if not available? */
+                null /* minimum app version */
+            )
+            .setHandleCodeInApp(true)
+            .setUrl("https://my-life-723.firebaseapp.com/")
+            .build()
+
         providers = arrayListOf(
-            AuthUI.IdpConfig.EmailBuilder().build(),
-            AuthUI.IdpConfig.PhoneBuilder().build(),
-            AuthUI.IdpConfig.GoogleBuilder().build()
+            EmailBuilder().enableEmailLinkSignIn().setActionCodeSettings(actionCodeSettings).build(),
+            IdpConfig.PhoneBuilder().build(),
+            IdpConfig.GoogleBuilder().build(),
+            IdpConfig.FacebookBuilder().build(),
+            IdpConfig.GitHubBuilder().build()
         )
         listener = FirebaseAuth.AuthStateListener { auth ->
             val user = auth.currentUser
@@ -73,7 +90,6 @@ class Activity_Login_or_Register : AppCompatActivity() {
                     .build(), AUTH_REQUEST_CODE)
             }
         }
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -83,7 +99,7 @@ class Activity_Login_or_Register : AppCompatActivity() {
             if(resultCode == RESULT_OK){
                 val response = IdpResponse.fromResultIntent(data)
 
-                //TODO : check if we have a new/old user
+
                 if(response != null && response.isNewUser){
                     val user = firebaseAuth.currentUser
                     user?.let {
@@ -91,12 +107,11 @@ class Activity_Login_or_Register : AppCompatActivity() {
                         val mymail = ""+user.email
                         val myuserId = ""+user.uid
                         val myphonenumber = ""+user.phoneNumber
-                        val myimage_url = "https://firebasestorage.googleapis.com/v0/b/my-life-723.appspot.com/o/default%2Fworkspace.png?alt=media&token=5af43008-6cfd-40d3-a2f3-7689b3719254";
+                        val myimage_url = "https://firebasestorage.googleapis.com/v0/b/my-life-723.appspot.com/o/default%2Fworkspace.png?alt=media&token=5af43008-6cfd-40d3-a2f3-7689b3719254"
                         val myimage_name = "ProfileImageFor__"+user.uid
 
                         val myuser = User(mymail, myuserId, myusername, myimage_url, myimage_name, myphonenumber)
                         uploadData(myuser)
-
                     }
                 }
                 else{
@@ -106,7 +121,6 @@ class Activity_Login_or_Register : AppCompatActivity() {
                     startActivity(intent)
                     finish()
                 }
-
             }
         }
     }
@@ -130,6 +144,4 @@ class Activity_Login_or_Register : AppCompatActivity() {
             }
         }
     }
-
-
 }

@@ -26,4 +26,8 @@
     <string name="modify_profile">Modify Profile</string>
     <string name="validate_update">Validate Update</string>
     <string name="welcome">WELCOME TO YOUR HOME</string>
+
+    <string name="facebook_app_id">579590626509471</string>
+    <string name="fb_login_protocol_scheme">fb579590626509471</string>
+    <string name="facebook_application_id">579590626509471</string>
 </resources>

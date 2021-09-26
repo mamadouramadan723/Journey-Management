@@ -1,6 +1,8 @@
 package com.example.myjourney.ui.profile
 
+import android.app.Activity.RESULT_OK
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +17,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.android.synthetic.main.fragment_update_profile.*
@@ -23,17 +26,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import java.lang.StringBuilder
-import androidx.core.app.ActivityCompat.startActivityForResult
-import android.app.Activity
-import android.app.Activity.RESULT_OK
-import android.net.Uri
-import android.util.Log
-import androidx.core.net.toUri
-import com.google.firebase.storage.FirebaseStorage
-
-import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.UploadTask
 
 
 class Fragment_Update_Profile : Fragment() {
@@ -89,7 +81,7 @@ class Fragment_Update_Profile : Fragment() {
                 withContext(Dispatchers.Main){
                     myuser?.let {
                         image_url = myuser.image_url
-                        Log.d("+++imageuri = ", "uri="+image_url.toUri()+"___url="+image_url)
+                        //Log.d("+++imageuri = ", "uri="+image_url.toUri()+"___url="+image_url)
                         username_EditText.setText(myuser.username)
                         mail_EditText.setText(myuser.mail)
                         phonenumber_EditText.setText(myuser.phonenumber)
@@ -105,14 +97,51 @@ class Fragment_Update_Profile : Fragment() {
             }
         }
     }
-
     private fun updateUserInfos() {
         uploadImage()
+    }
+
+    private fun uploadImage() {
+
+        val user = auth.currentUser
+        try {
+            if(image_uri != null){
+                val storageReference = FirebaseStorage.getInstance().getReference("Profile Image/"+user?.uid+"/profile for "+user?.uid)
+                val uploadTask =  storageReference.putFile(image_uri!!)
+
+                uploadTask.continueWithTask { task ->
+                    if (!task.isSuccessful) {
+                        task.exception?.let {
+                            throw it
+                        }
+                    }
+                    storageReference.downloadUrl
+                }.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+
+                        image_url = task.result.toString()
+                        getNewUserInfos_mapThem_then_Update()
+
+                    } else {
+                        Toast.makeText(context, "fail to retrieve uri from firestorage", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+            else{
+
+                getNewUserInfos_mapThem_then_Update()
+            }
+
+        }
+        catch (e: Exception){
+            Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun getNewUserInfos_mapThem_then_Update() {
 
         //get new user infos
+
         val myusername = username_EditText.text.toString()
         val mymail = mail_EditText.text.toString()
         val myphonenumber = phonenumber_EditText.text.toString()
@@ -140,6 +169,7 @@ class Fragment_Update_Profile : Fragment() {
             Toast.makeText(context, "phone number most not be empty", Toast.LENGTH_LONG).show()
             return
         }
+
         map["image_url"] = image_url
 
         //then update
@@ -184,36 +214,6 @@ class Fragment_Update_Profile : Fragment() {
                 image_uri = uri
                 Picasso.get().load(image_uri).into(profile_update_ImageView)
             }
-        }
-    }
-
-    private fun uploadImage() {
-        val user = auth.currentUser
-        try {
-            image_uri?.let {
-                val storageReference = FirebaseStorage.getInstance().getReference("Profile Image/"+user?.uid+"/profile for "+user?.uid)
-                val uploadTask =  storageReference.putFile(it)
-
-                val urlTask = uploadTask.continueWithTask { task ->
-                    if (!task.isSuccessful) {
-                        task.exception?.let {
-                            throw it
-                        }
-                    }
-                    storageReference.downloadUrl
-                }.addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        image_url = task.result.toString()
-                        getNewUserInfos_mapThem_then_Update()
-                    } else {
-                        Toast.makeText(context, "fail to retrieve uri from firestorage", Toast.LENGTH_LONG).show()
-                    }
-                }
-            }
-        }
-        catch (e: Exception){
-                Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
-
         }
     }
 }
