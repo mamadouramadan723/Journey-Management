@@ -1,32 +1,36 @@
 package com.example.myjourney.ui.home
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebView
-import android.webkit.WebViewClient
-import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import com.example.myjourney.R
-import com.example.myjourney.retro.MyAPI
-import kotlinx.android.synthetic.main.fragment_home.*
-import kotlinx.coroutines.*
-import retrofit2.Retrofit
-import retrofit2.await
-import retrofit2.awaitResponse
-import retrofit2.converter.gson.GsonConverterFactory
+import com.example.myjourney.main.Activity_Login_or_Register
+import com.google.firebase.auth.FirebaseAuth
 
-const val BASE_URL = ""
 class HomeFragment : Fragment() {
+
+    lateinit var auth: FirebaseAuth
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
+        auth = FirebaseAuth.getInstance()
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        checkUserConnection()
+    }
 
-
+    private fun checkUserConnection() {
+        val user = auth.currentUser
+        if(user == null){
+            val intent = Intent(context, Activity_Login_or_Register::class.java)
+            startActivity(intent)
+            activity?.finish()
+        }
+    }
 }

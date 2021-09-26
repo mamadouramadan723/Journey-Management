@@ -69,7 +69,6 @@ class Activity_Splash : AppCompatActivity() {
             if(resultCode == RESULT_OK){
                 val response = IdpResponse.fromResultIntent(data)
 
-                
                 if(response != null && response.isNewUser){
                     val user = firebaseAuth.currentUser
                     user?.let {
@@ -82,7 +81,7 @@ class Activity_Splash : AppCompatActivity() {
 
                         val myuser = User(mymail, myuserId, myusername, myimage_url, myimage_name, myphonenumber)
                         uploadData(myuser)
-                        //Log.d("+++linked", ""+myuser)
+
                     }
                 }
                 else{

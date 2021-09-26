@@ -18,7 +18,6 @@ import com.firebase.ui.auth.AuthUI
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.android.synthetic.main.fragment_prayers.*
 import java.util.*
 
 
@@ -51,7 +50,7 @@ class Activity_Main : AppCompatActivity() {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_profile, R.id.nav_daily, R.id.nav_prayers, R.id.nav_todo
+                R.id.nav_home, R.id.nav_profile, R.id.nav_daily, R.id.nav_todo
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -106,8 +105,4 @@ class Activity_Main : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onBackPressed() {
-        if(myweb_view.canGoBack()) myweb_view.goBack()
-        else super.onBackPressed()
-    }
 }
